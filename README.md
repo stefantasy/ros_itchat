@@ -19,4 +19,8 @@
 * 修改所在群聊，chchatroom+群聊名 就可以从一个群切换到另一个群
 * 输入roskey可以获取当前控制指令关键词
 
+## ROS通信话题
+关键词后面的词，将会发布到两个ROS话题
+* /voice_system/tts_topic 这个话题发布给TTS合成引擎
+* /voice_system/tlu_topic 这个话题发布给图灵节点，用来做运动控制和语义分析和云端回复。
 
