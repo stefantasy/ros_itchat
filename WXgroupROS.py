@@ -7,6 +7,8 @@ import itchat
 import rospy
 roskey = u'ROS'
 group_name = u'政校企合作业务部'
+group_id = u''
+flag = 0
 
 from std_msgs.msg import String
 from itchat.content import *
@@ -15,35 +17,42 @@ from itchat.content import *
 def wcMsg(msg): 
     global roskey
     global group_name
+    global group_id
+    global flag
     tts = rospy.Publisher('/voice_system/tts_topic', String, queue_size=10)
     nlu = rospy.Publisher('/voice_system/nlu_topic', String, queue_size=10)
     rospy.init_node('weChat2ROS', anonymous=True)
     rate = rospy.Rate(10) # 10hz
-    group  = itchat.get_chatrooms(update=True)	 
-    for g in group:
-          if g['NickName'] == group_name:#从群中找到指定的群聊
-	          group_id = g['UserName']
-                  msg0 = msg['Text']    
-		  break
 
+    if flag == 0:
+        group  = itchat.get_chatrooms(update=True)	 
+        for g in group:
+	    if g['NickName'] == group_name:#从群中找到指定的群聊
+	        group_id = g['UserName']
+                flag+=1
+                break
+    msg0 = u''
+    if msg['FromUserName'] == group_id:
+	msg0 = msg['Text']    
     if msg0[0:10] == u'chchatroom':  	
 	group_name = msg0[10:]
-	itchat.send(u'控制群聊名已修改为'+group_name ,'filehelper')
+        flag = 0
+        itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'控制群聊名已修改为'+group_name), group_id)
     if msg0[0:8] == u'chroskey':  	
         roskey = msg0[8:]
-	itchat.send(u'控制关键词已修改为'+roskey ,'filehelper')
-        
+        itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'控制关键词已修改为'+roskey), group_id)
     if msg0[0:6] == u'roskey':
-        itchat.send(u'当前控制关键词为'+roskey ,'filehelper')
-  	  	
+        itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'当前控制关键词为'+roskey), group_id)
+
     l = len(roskey)
     msg1 = msg0[0:l]
     msg2 = u''
     if msg1 == roskey:
     	msg2 = msg0[l:]
-    	itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'您的指令“'+msg2+u'”已发送成功'), group_id)
-    if msg0 == u'roskey':
-	itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'当前控制关键词为'+roskey), group_id)
+        if msg2 != u'':
+    	   itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'您的指令“'+msg2+u'”已发送成功'), group_id)
+    if msg1 != roskey:
+	itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'请输入"'+roskey+u' 指令"和卡丁互动'), group_id)
     
     if msg2== u'前进' and msg1 == roskey: 
         itchat.send(u'ROS机器人-前进中', 'filehelper')
