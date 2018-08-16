@@ -33,7 +33,10 @@ def wcMsg(msg):
                 break
     msg0 = u''
     if msg['FromUserName'] == group_id:
-	msg0 = msg['Text']    
+	msg0 = msg['Text']
+    else:
+        msg0 = u''
+	    
     if msg0[0:10] == u'chchatroom':  	
 	group_name = msg0[10:]
         flag = 0
@@ -51,8 +54,8 @@ def wcMsg(msg):
     	msg2 = msg0[l:]
         if msg2 != u'':
     	   itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'您的指令“'+msg2+u'”已发送成功'), group_id)
-    if msg1 != roskey:
-	itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'请输入"'+roskey+u' 指令"和卡丁互动'), group_id)
+    if msg1 != roskey and msg0 != u'':
+	itchat.send(u'@%s\u2005 %s' % (msg['ActualNickName'], u'请输入"'+roskey+u' 指令"和卡丁互动,例如："'+roskey+u'前进"'), group_id)
     
     if msg2== u'前进' and msg1 == roskey: 
         itchat.send(u'ROS机器人-前进中', 'filehelper')
