@@ -17,7 +17,7 @@ def wcMsg(msg):
     tts = rospy.Publisher('/voice_system/tts_topic', String, queue_size=10)
     nlu = rospy.Publisher('/voice_system/nlu_topic', String, queue_size=10)
     rospy.init_node('weChat2ROS', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(1) # 1hz
     
 
     msg0 = msg['Text']  
