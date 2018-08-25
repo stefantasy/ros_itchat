@@ -62,5 +62,6 @@ def wcMsg(msg):
     return replay or defaultreplay
 
 if __name__ == '__main__':
-    itchat.auto_login(True)
+    itchat.auto_login(enableCmdQR=2)
+
     itchat.run()
